@@ -1,24 +1,29 @@
 package main
 
 import (
+	"github.com/MeowNazo233/HarmonicaBot/functions"
 	HMC_Bot "github.com/MeowNazo233/HarmonicaBot/server"
 )
 
 func action_MessageGuild(eventinfo HMC_Bot.MessageGuild) {
-	if eventinfo.Message == "hello" {
-		HMC_Bot.SendGuildMsg("Hello [频道消息]", eventinfo.GuildID, eventinfo.ChannelID)
+
+	get_send := functions.RuleInto(0, eventinfo.GuildID, eventinfo.ChannelID, eventinfo.UserID, eventinfo.Sender.Nickname, eventinfo.Message)
+	if get_send != "" {
+		HMC_Bot.SendGuildMsg(get_send, eventinfo.GuildID, eventinfo.ChannelID)
 	}
 }
-
 func action_MessagePrivate(eventinfo HMC_Bot.MessagePrivate) {
-	if eventinfo.Message == "hello" {
-		HMC_Bot.SendPrivateMsg("Hello [私聊消息]", eventinfo.UserID)
+
+	get_send := functions.RuleInto(0, 0, 0, uint64(eventinfo.UserID), eventinfo.Sender.Nickname, eventinfo.Message)
+	if get_send != "" {
+		HMC_Bot.SendPrivateMsg(get_send, eventinfo.UserID)
 	}
 }
-
 func action_MessageGroup(eventinfo HMC_Bot.MessageGroup) {
-	if eventinfo.Message == "hello" {
-		HMC_Bot.SendGroupMsg("Hello [群聊消息]", eventinfo.GroupID)
+
+	get_send := functions.RuleInto(eventinfo.GroupID, 0, 0, uint64(eventinfo.UserID), eventinfo.Sender.Nickname, eventinfo.Message)
+	if get_send != "" {
+		HMC_Bot.SendGroupMsg(get_send, eventinfo.GroupID)
 	}
 }
 func main() {

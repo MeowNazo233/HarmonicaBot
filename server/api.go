@@ -78,8 +78,16 @@ func SendPrivateMsg(message string, user_id int64) (map[string]interface{}, erro
 }
 
 // SendGuildMsg
-func SendGuildMsg(message string, guild_id int64, channel_id int64) (map[string]interface{}, error) {
-	fmt.Println("afffffff")
+func SendGuildMsg(message string, guild_id uint64, channel_id uint64) (map[string]interface{}, error) {
+
+	// guild_id_send, _ := strconv.Atoi(guild_id)
+
+	// guild_id_send_uint64 := uint64(guild_id_send)
+
+	// channel_id_send, _ := strconv.Atoi(channel_id)
+
+	// channel_id_send_uint64 := uint64(channel_id_send)
+	fmt.Println(guild_id)
 	res, err := apiSend("send_guild_channel_msg", fmt.Sprintf(`{"guild_id": %d, "channel_id": %d, "message": "%s"}`, guild_id, channel_id, message))
 	if err != nil {
 		return nil, err

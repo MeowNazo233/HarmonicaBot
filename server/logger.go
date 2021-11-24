@@ -34,7 +34,7 @@ func InitLogger(lvl int) {
 	Logger.Attach("console", lvl, consoleConfig)
 
 	fileConfig := &go_logger.FileConfig{
-		Filename:   "logs/Pichubot.log",
+		Filename:   "logs/HMC_Bot.log",
 		MaxSize:    1024 * 1024,
 		MaxLine:    10000,
 		DateSlice:  "d",

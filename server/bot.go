@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -42,18 +43,19 @@ func (bot *Bot) Run() {
 					break // 重启bot循环 防止陷入死循环
 				}
 				m := make(map[string]interface{})
+
 				if err := json.Unmarshal([]byte(message), &m); err != nil {
 					Logger.Error(err.Error())
 					break // 重启bot循环 防止陷入死循环
 				}
-				go msgParse(m)
+				go msgParse(m, string(message))
 			}
 		}(bot.Config.Host, bot.Config.Path)
 		Logger.Info("Websocket will reconnect in 5s")
 		time.Sleep(5 * time.Second)
 	}
 }
-func msgParse(receive map[string]interface{}) {
+func msgParse(receive map[string]interface{}, json_receive string) {
 
 	switch receive["post_type"] {
 	// 消息事件
@@ -61,8 +63,8 @@ func msgParse(receive map[string]interface{}) {
 		switch receive["message_type"] {
 		// 频道信息
 		case "guild":
-			//fmt.Println(receive)
-			var eventinfo MessageGuild = parseGuild(receive)
+
+			var eventinfo MessageGuild = parseGuild(receive, json_receive)
 			Logger.Info(fmt.Sprintf("[↓]频道(%d-%d)[%s(%d)]: %s", eventinfo.GuildID, eventinfo.ChannelID, eventinfo.Sender.Nickname, eventinfo.Sender.UserID, eventinfo.Message))
 			for _, function := range Listeners.OnGuildMsg {
 				function(eventinfo)
@@ -234,22 +236,56 @@ func msgParse(receive map[string]interface{}) {
 	}
 }
 
-func parseGuild(r map[string]interface{}) MessageGuild {
+func float64_2_uint64(flo float64) uint64 {
+	str := strconv.FormatFloat(flo, 'f', 0, 64)
+	intNum, _ := strconv.Atoi(str)
+	int64Num := uint64(intNum)
+	int64Num = int64Num - 4
+	return int64Num
+}
+
+type guild_message_sender struct {
+	Nickname string `json:"nickname"`
+	User_id  uint64 `json:"user_id"`
+}
+
+type guild_message struct {
+	Channel_id   uint64               `json:"channel_id"`
+	Guild_id     uint64               `json:"guild_id"`
+	Message      string               `json:"message"`
+	Message_id   string               `json:"message_id"`
+	Message_type string               `json:"message_type"`
+	Post_type    string               `json:"post_type"`
+	Self_id      uint64               `json:"self_id"`
+	Self_tiny_id uint64               `json:"self_tiny_id"`
+	Sender       guild_message_sender `json:"sender"`
+	Sub_type     string               `json:"sub_type"`
+	Time         uint64               `json:"time"`
+	User_id      uint64               `json:"user_id"`
+}
+
+func parseGuild(r map[string]interface{}, json_r string) MessageGuild {
+
+	var guild_info guild_message
+	json_err := json.Unmarshal([]byte(json_r), &guild_info)
+	if json_err != nil {
+		fmt.Println(json_err)
+	}
 	e := MessageGuild{
-		GuildID:    int64(r["guild_id"].(float64)),
-		ChannelID:  int64(r["channel_id"].(float64)),
-		Message:    r["message"].(string),
-		MessageID:  r["message_id"].(string),
-		SelfID:     int64(r["self_id"].(float64)),
-		SelfTinyID: int64(r["self_tiny_id"].(float64)),
-		SubType:    r["sub_type"].(string),
-		UserID:     int64(r["user_id"].(float64)),
+		GuildID:    guild_info.Guild_id,
+		ChannelID:  guild_info.Channel_id,
+		Message:    guild_info.Message,
+		MessageID:  guild_info.Message_id,
+		SelfID:     guild_info.Self_id,
+		SelfTinyID: guild_info.Self_tiny_id,
+		SubType:    guild_info.Sub_type,
+		UserID:     guild_info.User_id,
 		Sender: struct {
-			UserID   int64
+			UserID   uint64
 			Nickname string
 		}{
-			UserID:   int64(r["sender"].(map[string]interface{})["user_id"].(float64)),
-			Nickname: r["sender"].(map[string]interface{})["nickname"].(string),
+			UserID:   guild_info.Sender.User_id,
+			Nickname: guild_info.Sender.Nickname,
 		},
 	}
 	return e
