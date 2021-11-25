@@ -43,7 +43,7 @@ func ConnectWS(url url.URL) (*websocket.Conn, *http.Response, error) {
 	conf_bot_token := conf_bot.Token
 
 	if conf_bot_token != "" {
-		header["Authorization"] = []string{"Token " + "NazoProject"}
+		header["Authorization"] = []string{"Token " + conf_bot_token}
 	}
 
 	c, r, err := dailer.Dial(url.String(), header)
