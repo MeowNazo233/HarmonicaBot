@@ -13,7 +13,7 @@ HarmonicaBot，基于Go-cqhttp的频道（Guild）机器人，使用正向协议
 
 `go get github.com/MeowNazo233/HarmonicaBot/server` 导入包
 
-```
+```go
 package main
 import (
 	HMC_Bot "github.com/MeowNazo233/HarmonicaBot/server"
