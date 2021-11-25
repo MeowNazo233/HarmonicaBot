@@ -8,6 +8,37 @@ HarmonicaBot，基于Go-cqhttp的频道（Guild）机器人，使用正向协议
 
 - 占卜 `指令：占卜`
 - warframe查询 `指令：wf`
+
+### 快速上手
+
+`go get github.com/MeowNazo233/HarmonicaBot/server` 导入包
+
+```
+package main
+import (
+	HMC_Bot "github.com/MeowNazo233/HarmonicaBot/server"
+	//...
+)
+func action_guild(eventinfo HMC_Bot.MessageGuild) {
+	if eventinfo.Message == "hello" {
+		HMC_Bot.SendGuildMsg("Hello World", eventinfo.GuildID, eventinfo.ChannelID)
+	}
+}
+func main() {
+	//绑定频道消息处理函数
+	HMC_Bot.Listeners.OnGuildMsg = append(HMC_Bot.Listeners.OnGuildMsg, action_guild)
+	
+	Bot := HMC_Bot.NewBot()
+	Bot.Config = HMC_Bot.Config{
+		Loglvl:   HMC_Bot.LOGGER_LEVEL_INFO,
+		Host:     "0.0.0.0:6700",
+		MasterQQ: 1234567890,
+		Path:     "/",
+	}
+	Bot.Run()
+}
+```
+
 ### 参考项目
 
 - [go-Pichubot](https://github.com/0ojixueseno0/go-Pichubot)
