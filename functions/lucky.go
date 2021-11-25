@@ -18,7 +18,7 @@ func Lucky(user_id_HMC uint64) string {
 	exist := false
 
 	date_now := fmt.Sprintf("%d-%s-%d", year, month, day)
-	db, err := sql.Open("sqlite3", "./lucky.db")
+	db, err := sql.Open("sqlite3", "./data/lucky.db")
 	checkErr(err)
 
 	//查询数据

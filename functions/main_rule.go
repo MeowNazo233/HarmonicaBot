@@ -2,7 +2,10 @@ package functions
 
 import "strings"
 
-func RuleInto(groupid int64, guild_id uint64, channel_id uint64, user_id uint64, nickname string, msg string) string {
+func RuleInto(selif_id uint64, groupid int64, guild_id uint64, channel_id uint64, user_id uint64, nickname string, msg string, msgtype string) string {
+	if user_id == selif_id {
+		return ""
+	}
 	if strings.Contains(msg, "占卜") {
 		send := Lucky(user_id)
 		return send

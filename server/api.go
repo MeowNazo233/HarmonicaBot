@@ -3,6 +3,7 @@ package server
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -10,13 +11,42 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"gopkg.in/yaml.v3"
 )
+
+type config_bot struct {
+	Token string `yaml:"token"`
+}
+
+func (c *config_bot) getConf_bot() *config_bot {
+	yamlFile, err := ioutil.ReadFile("conf/conf_bot.yaml")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	err = yaml.Unmarshal(yamlFile, c)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	return c
+}
 
 var Connect *websocket.Conn
 
 func ConnectWS(url url.URL) (*websocket.Conn, *http.Response, error) {
 	var dailer *websocket.Dialer
-	c, r, err := dailer.Dial(url.String(), nil)
+
+	header := http.Header{
+		"User-Agent": []string{"CQHttp/4.15.0"},
+	}
+	var cf config_bot
+	conf_bot := cf.getConf_bot()
+	conf_bot_token := conf_bot.Token
+
+	if conf_bot_token != "" {
+		header["Authorization"] = []string{"Token " + "NazoProject"}
+	}
+
+	c, r, err := dailer.Dial(url.String(), header)
 	return c, r, err
 }
 func sendwspack(message string) error {
@@ -80,13 +110,6 @@ func SendPrivateMsg(message string, user_id int64) (map[string]interface{}, erro
 // SendGuildMsg
 func SendGuildMsg(message string, guild_id uint64, channel_id uint64) (map[string]interface{}, error) {
 
-	// guild_id_send, _ := strconv.Atoi(guild_id)
-
-	// guild_id_send_uint64 := uint64(guild_id_send)
-
-	// channel_id_send, _ := strconv.Atoi(channel_id)
-
-	// channel_id_send_uint64 := uint64(channel_id_send)
 	fmt.Println(guild_id)
 	res, err := apiSend("send_guild_channel_msg", fmt.Sprintf(`{"guild_id": %d, "channel_id": %d, "message": "%s"}`, guild_id, channel_id, message))
 	if err != nil {
