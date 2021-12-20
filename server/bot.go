@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"strconv"
 	"time"
 )
 
@@ -236,32 +235,24 @@ func msgParse(receive map[string]interface{}, json_receive string) {
 	}
 }
 
-func float64_2_uint64(flo float64) uint64 {
-	str := strconv.FormatFloat(flo, 'f', 0, 64)
-	intNum, _ := strconv.Atoi(str)
-	int64Num := uint64(intNum)
-	int64Num = int64Num - 4
-	return int64Num
-}
-
 type guild_message_sender struct {
 	Nickname string `json:"nickname"`
-	User_id  uint64 `json:"user_id"`
+	User_id  string `json:"user_id"`
 }
 
 type guild_message struct {
-	Channel_id   uint64               `json:"channel_id"`
-	Guild_id     uint64               `json:"guild_id"`
+	Channel_id   string               `json:"channel_id"`
+	Guild_id     string               `json:"guild_id"`
 	Message      string               `json:"message"`
 	Message_id   string               `json:"message_id"`
 	Message_type string               `json:"message_type"`
 	Post_type    string               `json:"post_type"`
 	Self_id      uint64               `json:"self_id"`
-	Self_tiny_id uint64               `json:"self_tiny_id"`
+	Self_tiny_id string               `json:"self_tiny_id"`
 	Sender       guild_message_sender `json:"sender"`
 	Sub_type     string               `json:"sub_type"`
 	Time         uint64               `json:"time"`
-	User_id      uint64               `json:"user_id"`
+	User_id      string               `json:"user_id"`
 }
 
 func parseGuild(r map[string]interface{}, json_r string) MessageGuild {
@@ -281,13 +272,14 @@ func parseGuild(r map[string]interface{}, json_r string) MessageGuild {
 		SubType:    guild_info.Sub_type,
 		UserID:     guild_info.User_id,
 		Sender: struct {
-			UserID   uint64
+			UserID   string
 			Nickname string
 		}{
 			UserID:   guild_info.Sender.User_id,
 			Nickname: guild_info.Sender.Nickname,
 		},
 	}
+	fmt.Println(e.GuildID)
 	return e
 }
 

@@ -37,16 +37,16 @@ type listeners struct {
 
 //MessageGuild 频道消息事件
 type MessageGuild struct {
-	GuildID    uint64 // 频道ID
-	ChannelID  uint64 // 子频道ID
+	GuildID    string // 频道ID
+	ChannelID  string // 子频道ID
 	Message    string // 消息内容
 	MessageID  string // 消息id
 	SelfID     uint64 // 收到事件的机器人 QQ 号
-	SelfTinyID uint64 // 收到事件的机器人频道号
+	SelfTinyID string // 收到事件的机器人频道号
 	SubType    string // 消息子类型(channel)
-	UserID     uint64 // 发送者 QQ 号
+	UserID     string // 发送者 QQ 号
 	Sender     struct {
-		UserID   uint64 // 发送者 QQ 号
+		UserID   string // 发送者 QQ 号
 		Nickname string // 昵称
 	} // 发送人信息
 }

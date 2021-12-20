@@ -108,17 +108,17 @@ func SendPrivateMsg(message string, user_id int64) (map[string]interface{}, erro
 }
 
 // SendGuildMsg
-func SendGuildMsg(message string, guild_id uint64, channel_id uint64) (map[string]interface{}, error) {
+func SendGuildMsg(message string, guild_id string, channel_id string) (map[string]interface{}, error) {
 
 	fmt.Println(guild_id)
-	res, err := apiSend("send_guild_channel_msg", fmt.Sprintf(`{"guild_id": %d, "channel_id": %d, "message": "%s"}`, guild_id, channel_id, message))
+	res, err := apiSend("send_guild_channel_msg", fmt.Sprintf(`{"guild_id": %s, "channel_id": %s, "message": "%s"}`, guild_id, channel_id, message))
 	if err != nil {
 		return nil, err
 	}
 	if res["status"].(string) == "ok" {
-		Logger.Info(fmt.Sprintf("[↑][频道][%d-%d]: %s", guild_id, channel_id, message))
+		Logger.Info(fmt.Sprintf("[↑][频道][%s-%s]: %s", guild_id, channel_id, message))
 	} else {
-		Logger.Warning(fmt.Sprintf("[↑][发送失败][频道][%d-%d]: %s", guild_id, channel_id, message))
+		Logger.Warning(fmt.Sprintf("[↑][发送失败][频道][%s-%s]: %s", guild_id, channel_id, message))
 	}
 
 	return res, err
