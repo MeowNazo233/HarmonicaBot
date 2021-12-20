@@ -6,8 +6,8 @@ HarmonicaBot，基于Go-cqhttp的频道（Guild）机器人，使用正向协议
 
 ### 目前功能
 
-- 占卜 `指令：占卜`
-- warframe查询 `指令：wf`
+- 被动消息
+- 主动消息
 
 ### 快速上手
 
